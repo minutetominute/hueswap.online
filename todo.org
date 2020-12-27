@@ -1,0 +1,22 @@
+* TODO gif library swapping
+** DONE file read
+   CLOSED: [2020-12-27 Sun 14:22]
+** DONE file conversion from base64 encoded string to hex sequence
+   CLOSED: [2020-12-27 Sun 15:24]
+   https://stackoverflow.com/questions/34309988/byte-array-to-hex-string-conversion-in-javascript
+   the hex conversion doesn't seem to be happening right
+   but the byte sequence is fine
+   have the most of the bytes converting to hex fine except for the alphanumerics
+   https://stackoverflow.com/questions/40031688/javascript-arraybuffer-to-hex
+** DONE grab color table hex values
+   CLOSED: [2020-12-27 Sun 16:23]
+   https://www.codeproject.com/Articles/1042433/Manipulating-GIF-color-tables
+   read the 11th byte
+   the 5th through 7th bits provide size of global color table
+   grab number of Nx3 (3 bytes for each red, green, blue) bits calculated starting at the 14th bit
+** TODO color table byte input fields
+
+** TODO embed new color table into byte sequence
+** TODO export byte sequence to base64 encoded string
+** TODO download file
+   https://stackoverflow.com/questions/14011021/how-to-download-a-base64-encoded-image#14011075

@@ -1,0 +1,53 @@
+<html>
+    <body>
+        <input id="file-input" type="file" name="name" onchange="readFile()"/>
+        <section id="color-table">
+        </section>
+    </body>
+    <script>
+     const toBase64 = file => new Promise((resolve, reject) => {
+         const reader = new FileReader();
+         reader.readAsDataURL(file);
+         reader.onload = () => resolve(reader.result);
+         reader.onerror = error => reject(error);
+     });
+
+     const toBytes = base64String => {
+         // remove metadata from dataUrl
+         let dataString = base64String.split(",")[1];
+
+         let binary = window.atob(dataString);
+         var array = new Uint8Array(binary.length);
+         for( var i = 0; i < binary.length; i++ ) {
+             array[i] = binary.charCodeAt(i)
+         }
+         return array;
+     }
+
+     const toHex = bytes => {
+         return Array.prototype.map.call(new Uint8Array(bytes.buffer), x => ('00' + x.toString(16)).slice(-2));
+     }
+
+     const findByteRange = bytes => {
+         let flagsByte = bytes[10]
+         // use bit masks
+         let globalColorTableSizeBits = [
+             (flagsByte & (1 << 5)) === 0 ? 0 : 1,
+             (flagsByte & (1 << 6)) === 0 ? 0 : 1,
+             (flagsByte & (1 << 7)) === 0 ? 0 : 1,
+         ]
+         colorTableSize = 3 * 2**(parseInt(globalColorTableSizeBits.join(''), 2) + 1)
+         return [13, 13 + colorTableSize]
+     }
+
+     async function readFile() {
+         let file = document.querySelector('#file-input').files[0];
+         let base64String = await toBase64(file);
+         let bytes = toBytes(base64String)
+         let byteRange = findByteRange(bytes)
+         let hex = toHex(bytes)
+         let colorTable = hex.slice(byteRange[0], byteRange[1])
+         console.log(colorTable);
+     }
+    </script>
+</html>
