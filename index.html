@@ -1,8 +1,12 @@
 <html>
     <body>
         <input id="file-input" type="file" name="name" onchange="readFile()"/>
-        <section id="color-table">
-        </section>
+        <button id="download" style="display: none;">Download</button>
+        <br/>
+        <button class="zero" id="red" style="display: none;">Zero Red</button>
+        <button class="zero" id="green" style="display: none;">Zero Green</button>
+        <button class="zero" id="blue" style="display: none;">Zero Blue</button>
+        <ul id="color-table"></ul>
     </body>
     <script>
      const toBase64 = file => new Promise((resolve, reject) => {
@@ -29,15 +33,107 @@
      }
 
      const findByteRange = bytes => {
-         let flagsByte = bytes[10]
-         // use bit masks
+         let flagsByte = bytes[10];
          let globalColorTableSizeBits = [
              (flagsByte & (1 << 5)) === 0 ? 0 : 1,
              (flagsByte & (1 << 6)) === 0 ? 0 : 1,
              (flagsByte & (1 << 7)) === 0 ? 0 : 1,
-         ]
-         colorTableSize = 3 * 2**(parseInt(globalColorTableSizeBits.join(''), 2) + 1)
-         return [13, 13 + colorTableSize]
+         ];
+         colorTableSize = 3 * 2**(parseInt(globalColorTableSizeBits.join(''), 2) + 1);
+         return [13, 13 + colorTableSize];
+     }
+
+     const displayDownloadButton = onClick => {
+         element = document.querySelector('#download');
+         element.onclick = onClick
+         element.style = "";
+     }
+
+     const updateColorTable = (colorTable, callback) => {
+         return event => {
+             newValue = event.target.value;
+             idx = parseInt(event.target.id);
+             colorTable[idx] = newValue;
+             callback();
+         }
+     }
+
+     const zeroColorChannel = (colorTable, colorChannel, callback) => {
+         var idx;
+         if (colorChannel === "red") {
+             idx = 0;
+         } else if (colorChannel === "green") {
+             idx = 1;
+         } else if (colorChannel === "blue") {
+             idx = 2;
+         }
+         for(var i = idx; i < colorTable.length; i = i+3) {
+             colorTable[i] = '00'
+         }
+         callback()
+     }
+
+     const renderZeroButtons = (colorTable, callback) => {
+         buttons = document.querySelectorAll('.zero');
+         buttons.forEach(button => {
+             button.style = "";
+             let colorChannel = button.id
+             button.onclick = () => {
+                 zeroColorChannel(
+                     colorTable,
+                     colorChannel,
+                     callback
+             )};
+         });
+     }
+
+     const updateBytes = (bytes, colorTable, byteRange) => {
+         for(var i = byteRange[0]; i < byteRange[1]; i++) {
+             bytes[i] = parseInt(colorTable[i - byteRange[0]], 16);
+         }
+
+     }
+
+     const onDownloadClick = (bytes, colorTable, byteRange) => {
+         updateBytes(bytes, colorTable, byteRange)
+         let charsArr = []
+         for(var i = 0; i < bytes.length; i++) {
+             charsArr.push(String.fromCharCode(bytes[i]))
+         }
+         let chars = charsArr.join('')
+         let dataString = window.btoa(chars);
+         let base64String = 'data:image/gif;base64,' + dataString;
+         let a = document.createElement("a");
+         a.href = base64String;
+         a.download = "result.gif";
+         a.click();
+     }
+
+     const renderColorTableHTML = (colorTable, callback) => {
+         let colorTableList = document.querySelector('#color-table');
+         colorTableList.innerHTML = "";
+         colorTable.forEach((element, idx) => {
+             item = document.createElement("li");
+             input = document.createElement("input");
+             input.id = idx;
+             input.type = "text";
+             input.value = element;
+             input.onchange = updateColorTable(colorTable, callback);
+             item.appendChild(input);
+             colorTableList.appendChild(item);
+         });
+     }
+
+     const colorTableUpdated = (bytes, colorTable, byteRange) => {
+         return () => {
+             renderColorTableHTML(
+                 colorTable,
+                 colorTableUpdated(bytes, colorTable, byteRange)
+             );
+             displayDownloadButton(() => {
+                 onDownloadClick(bytes, colorTable, byteRange)
+             })
+         }
      }
 
      async function readFile() {
@@ -47,7 +143,9 @@
          let byteRange = findByteRange(bytes)
          let hex = toHex(bytes)
          let colorTable = hex.slice(byteRange[0], byteRange[1])
-         console.log(colorTable);
+         let callback = colorTableUpdated(bytes, colorTable, byteRange)
+         renderColorTableHTML(colorTable, callback);
+         renderZeroButtons(colorTable, callback);
      }
     </script>
 </html>
