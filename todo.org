@@ -1,4 +1,5 @@
-* TODO gif library swapping
+* DONE gif library for hue swapping
+  CLOSED: [2020-12-27 Sun 20:03]
 ** DONE file read
    CLOSED: [2020-12-27 Sun 14:22]
 ** DONE file conversion from base64 encoded string to hex sequence
@@ -14,9 +15,15 @@
    read the 11th byte
    the 5th through 7th bits provide size of global color table
    grab number of Nx3 (3 bytes for each red, green, blue) bits calculated starting at the 14th bit
-** TODO color table byte input fields
-
-** TODO embed new color table into byte sequence
-** TODO export byte sequence to base64 encoded string
-** TODO download file
+** DONE color table byte input fields
+   CLOSED: [2020-12-27 Sun 19:31]
+   i can render those, but i also want to add a bucket zeroing for each color channel
+   finished the input fields
+   need to add the zeroing
+** DONE embed new color table into byte sequence
+   CLOSED: [2020-12-27 Sun 19:52]
+** DONE export byte sequence to base64 encoded string
+   CLOSED: [2020-12-27 Sun 19:56]
+** DONE download file
+   CLOSED: [2020-12-27 Sun 20:02]
    https://stackoverflow.com/questions/14011021/how-to-download-a-base64-encoded-image#14011075
