@@ -1,7 +1,18 @@
 <html>
+    <head>
+        <style>
+            .redval{color: #aa0000; width: 30px; height: 22px;}
+            .greenval{color: #00aa00; width: 30px; height: 22px;}
+            .blueval{color: #0000aa; width: 30px; height: 22px;}
+            .colorvaluebox{display: inline-block; width: 60px; height: 22px;}
+            #colorbox{float: left;}
+            #color-table{width: 650px;}
+            #color-table-box{float: right; width: 275px;}
+        </style>
+    </head>
     <body>
         <img id="gifbox" src="test.gif"/>
-        <div style="float:left">
+        <div id="colorbox" style="float:left">
         <input id="file-input" type="file" name="name" onchange="readFile()"/>
         <button id="download" style="display: none;">Download</button>
         <br/>
@@ -10,8 +21,10 @@
         <button class="zero" id="blue" style="display: none;">Zero Blue</button><br/>
         <button class="random" id="randred" style="display: none;">Random Red</button>
         <button class="random" id="randgreen" style="display: none;">Random Green</button>
-        <button class="random" id="randblue" style="display: none;">Random Blue</button>
-        <ul id="color-table"></ul>
+        <button class="random" id="randblue" style="display: none;">Random Blue</button><br/>
+            <div id="color-table-box"></div>
+            <div id="color-table"></div>
+            
         </div>
     </body>
     <script>
@@ -103,7 +116,7 @@
              idx = 2;
          }
          for(var i = idx; i < colorTable.length; i = i+3) {
-             colorTable[i] = Math.floor(Math.random()*256).toString(16);
+             colorTable[i] = Math.floor(Math.random()*256).toString(16).padStart(2, '0');
          }
          callback()
      }
@@ -148,20 +161,56 @@
          let colorTableList = document.querySelector('#color-table');
          colorTableList.innerHTML = "";
          colorTable.forEach((element, idx) => {
-             item = document.createElement("li");
              input = document.createElement("input");
              input.id = idx;
              input.type = "text";
              input.value = element;
+             switch(idx % 3) {
+                 case 0: 
+                   input.setAttribute("class", "redval");
+                   break;
+                 case 1:
+                   input.setAttribute("class", "greenval");
+                   break;
+                 case 2:
+                   input.setAttribute("class", "blueval");
+                 }
              input.onchange = updateColorTable(colorTable, callback);
-             item.appendChild(input);
-             colorTableList.appendChild(item);
+             colorTableList.appendChild(input);
+         });
+     }
+
+     const renderColorTableBox = (colorTable, callback) => {
+         let colorTableListBox = document.querySelector('#color-table-box');
+         colorTableListBox.innerHTML = "";
+         var colorTableColor = [];
+         var dumb;
+         for (var i=0; i<colorTable.length; i+=3) {
+             colorTableColor.push(colorTable.slice(i,i+3));
+         }
+         // there must be a better way than to use innerHTML like this
+         colorTableColor.forEach((element, idx) => {
+             input = document.createElement("span");
+             input.setAttribute("class", "colorvaluebox")
+             input.id = "color" + idx;
+             // element has commas
+             input.innerHTML = element;
+             // assign as innerHTML and then strip out commas
+             dumb = "#" + input.innerHTML.replace(/,/g,'');
+             input.innerHTML = dumb;
+             input.style.backgroundColor = dumb;
+             colorTableListBox.appendChild(document.createTextNode (" "));
+             colorTableListBox.appendChild(input);
          });
      }
 
      const colorTableUpdated = (bytes, colorTable, byteRange) => {
          return () => {
              renderColorTableHTML(
+                 colorTable,
+                 colorTableUpdated(bytes, colorTable, byteRange)
+             );
+             renderColorTableBox(
                  colorTable,
                  colorTableUpdated(bytes, colorTable, byteRange)
              );
@@ -181,6 +230,7 @@
          let colorTable = hex.slice(byteRange[0], byteRange[1])
          let callback = colorTableUpdated(bytes, colorTable, byteRange)
          renderColorTableHTML(colorTable, callback);
+         renderColorTableBox(colorTable, callback);
          renderZeroButtons(colorTable, callback);
          renderRandomButtons(colorTable, callback);
          newGif(bytes, colorTable, byteRange);
@@ -189,7 +239,7 @@
      function renderGif(gif) {
          document.getElementById("gifbox").src = gif;
      }
-     
+
      const newGif = (bytes, colorTable, byteRange) => {
          updateBytes(bytes, colorTable, byteRange)
          let charsArr = []
