@@ -54,9 +54,9 @@
      const findByteRange = bytes => {
          let flagsByte = bytes[10];
          let globalColorTableSizeBits = [
-             (flagsByte & (1 << 5)) === 0 ? 0 : 1,
              (flagsByte & (1 << 6)) === 0 ? 0 : 1,
              (flagsByte & (1 << 7)) === 0 ? 0 : 1,
+             (flagsByte & (1 << 8)) === 0 ? 0 : 1,
          ];
          colorTableSize = 3 * 2**(parseInt(globalColorTableSizeBits.join(''), 2) + 1);
          return [13, 13 + colorTableSize];
