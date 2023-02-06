@@ -1,5 +1,6 @@
 <html>
     <head>
+        <title>hueswap -- gif color table editor</title>
         <style>
             .redval{color: #aa0000; width: 30px; height: 22px;}
             .greenval{color: #00aa00; width: 30px; height: 22px;}
@@ -15,6 +16,8 @@
         <div id="colorbox" style="float:left">
         <input id="file-input" type="file" name="name" onchange="readFile()"/>
         <button id="download" style="display: none;">Download</button>
+        <br/>
+        output filename: <input type="text" id="filename" value="result"/>.gif
         <br/>
         <button class="zero" id="red" style="display: none;">Zero Red</button>
         <button class="zero" id="green" style="display: none;">Zero Green</button>
@@ -144,6 +147,7 @@
 
      const onDownloadClick = (bytes, colorTable, byteRange) => {
          updateBytes(bytes, colorTable, byteRange)
+         var filename = document.getElementById("filename").value;
          let charsArr = []
          for(var i = 0; i < bytes.length; i++) {
              charsArr.push(String.fromCharCode(bytes[i]))
@@ -153,7 +157,7 @@
          let base64String = 'data:image/gif;base64,' + dataString;
          let a = document.createElement("a");
          a.href = base64String;
-         a.download = "result.gif";
+         a.download = filename + ".gif";
          a.click();
      }
 
@@ -185,23 +189,51 @@
          colorTableListBox.innerHTML = "";
          var colorTableColor = [];
          var dumb;
+         var thisColor;
+         var thisId;
          for (var i=0; i<colorTable.length; i+=3) {
              colorTableColor.push(colorTable.slice(i,i+3));
          }
-         // there must be a better way than to use innerHTML like this
+         // there must be a better way than this
          colorTableColor.forEach((element, idx) => {
-             input = document.createElement("span");
+             input = document.createElement("input");
              input.setAttribute("class", "colorvaluebox")
-             input.id = "color" + idx;
+             thisId = "color" + idx;
+             input.id = thisId;
              // element has commas
-             input.innerHTML = element;
-             // assign as innerHTML and then strip out commas
-             dumb = "#" + input.innerHTML.replace(/,/g,'');
-             input.innerHTML = dumb;
-             input.style.backgroundColor = dumb;
+             input.value = element;
+             // assign as value and then strip out commas
+             dumb = input.value.replace(/,/g,'');
+             // need hash mark to use as a color
+             thisColor = "#" + dumb;
+             input.style.backgroundColor = thisColor;
+             // but we don't want the hash mark in the value itself
+             input.value = dumb;
+             input.addEventListener('change', function() {updateColorTableBox(this.id, colorTable, callback)} );
              colorTableListBox.appendChild(document.createTextNode (" "));
              colorTableListBox.appendChild(input);
          });
+         
+     }
+
+     
+     function updateColorTableBox(id, colorTable, callback) {
+         // when we update the color boxes, that updates the inputs and changes the colors
+         var idNumber = id.slice(5) * 3;
+         var id1 = document.getElementById(idNumber);
+         var id2 = document.getElementById(idNumber + 1);
+         var id3 = document.getElementById(idNumber + 2);
+         var colorVal = document.getElementById(id).value;
+         
+         // split color into three and update three inputs
+         id1.value = colorVal.slice(0,2);
+         id2.value = colorVal.slice(2,4);
+         id3.value = colorVal.slice(4);
+         
+         // add listeners so colors will actually update
+         id1.dispatchEvent(new Event("change"));
+         id2.dispatchEvent(new Event("change")); 
+         id3.dispatchEvent(new Event("change")); 
      }
 
      const colorTableUpdated = (bytes, colorTable, byteRange) => {
