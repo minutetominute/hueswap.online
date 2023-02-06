@@ -5,10 +5,11 @@
             .redval{color: #aa0000; width: 30px; height: 22px;}
             .greenval{color: #00aa00; width: 30px; height: 22px;}
             .blueval{color: #0000aa; width: 30px; height: 22px;}
-            .colorvaluebox{display: inline-block; width: 60px; height: 22px;}
+            .colorvaluebox{display: inline-block; width: 60px; height: 44x;}
+            label{display: inline-block; width: 60px;}
             #colorbox{float: left;}
-            #color-table{width: 650px;}
-            #color-table-box{float: right; width: 275px;}
+            #color-table{display: none;}
+            #color-table-box{width: 500px;}
         </style>
     </head>
     <body>
@@ -27,6 +28,7 @@
         <button class="random" id="randblue" style="display: none;">Random Blue</button><br/>
             <div id="color-table-box"></div>
             <div id="color-table"></div>
+            <div id="test-box"></div>
             
         </div>
     </body>
@@ -188,30 +190,29 @@
          let colorTableListBox = document.querySelector('#color-table-box');
          colorTableListBox.innerHTML = "";
          var colorTableColor = [];
-         var dumb;
          var thisColor;
          var thisId;
+         var label;
          for (var i=0; i<colorTable.length; i+=3) {
-             colorTableColor.push(colorTable.slice(i,i+3));
+             colorTableColor.push(colorTable.slice(i,i+3).join(''));
          }
-         // there must be a better way than this
          colorTableColor.forEach((element, idx) => {
              input = document.createElement("input");
-             input.setAttribute("class", "colorvaluebox")
+             label = document.createElement("label");
+             input.setAttribute("class", "colorvaluebox");
              thisId = "color" + idx;
              input.id = thisId;
-             // element has commas
              input.value = element;
-             // assign as value and then strip out commas
-             dumb = input.value.replace(/,/g,'');
+             label.setAttribute("for",input);
              // need hash mark to use as a color
-             thisColor = "#" + dumb;
-             input.style.backgroundColor = thisColor;
-             // but we don't want the hash mark in the value itself
-             input.value = dumb;
+             thisColor = "#" + element;
+             input.type = "color";
+             input.value = thisColor;
+             label.innerHTML = thisColor;
              input.addEventListener('change', function() {updateColorTableBox(this.id, colorTable, callback)} );
              colorTableListBox.appendChild(document.createTextNode (" "));
              colorTableListBox.appendChild(input);
+             colorTableListBox.insertBefore(label, input);
          });
          
      }
@@ -224,12 +225,12 @@
          var id2 = document.getElementById(idNumber + 1);
          var id3 = document.getElementById(idNumber + 2);
          var colorVal = document.getElementById(id).value;
-         
+
          // split color into three and update three inputs
-         id1.value = colorVal.slice(0,2);
-         id2.value = colorVal.slice(2,4);
-         id3.value = colorVal.slice(4);
-         
+         id1.value = colorVal.slice(1,3);
+         id2.value = colorVal.slice(3,5);
+         id3.value = colorVal.slice(5);
+
          // add listeners so colors will actually update
          id1.dispatchEvent(new Event("change"));
          id2.dispatchEvent(new Event("change")); 
