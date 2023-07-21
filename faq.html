@@ -1,0 +1,32 @@
+<!DOCTYPE html SYSTEM "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head><title>Hueswap FAQ</title></head>
+    <body>
+        <h1>Hueswap &mdash; frequently asked questions</h1>
+        
+        <h2>What is <i>Hueswap</i>?</h2>
+        
+        <p>Hueswap is a web app for editing GIF color tables. Upload your favorite GIF, change the colors around, and then download the result!</p>
+        
+        <h2>Does Hueswap only work with GIFs? What about WEBP/MP4/etc?</h2>
+        
+        <p>Hueswap only works with <i>real GIF files</i> because it relies on the GIF's color table to work. It does not work with any fake pseudo-GIF formats like WEBP. (Fortunately there are <a href="https://www.google.com/search?q=webp+to+gif+converter">free tools online</a> for converting WEBP and similar formats into real GIFs.)</p>
+        
+        <h2>What are color tables?</h2>
+        
+        <p>The way GIFs handle color info is fairly unique &mdash; it's called <a href="https://en.wikipedia.org/wiki/Indexed_color">indexed color mode</a>. This means that every GIF<sup>*</sup> contains an <i>index</i> (or list) of all the colors used in the image. This index is called a <i>color table</i>.</p>
+        
+        <p>Hueswap hacks directly into a GIF's color table and lets you change the color values, leaving everything else unchanged. The arrangement of the pixels remains the same &mdash; only the colors change.</p>
+        
+        <h2>Can I download the code?</h2>
+        
+        <p>Download the code for yourself (and even contribute changes) at <a href="https://github.com/minutetominute/hueswap.online">https://github.com/minutetominute/hueswap.online</a>.</p>
+        
+        <h2>Who is responsible for this?</h2>
+        
+        <p>Hueswap was developed by Jose Garza and Benjamin Berg, based on a concept by Benjamin Berg.</p>
+        
+        
+        <p><sup>*</sup> <i>It is possible to create a GIF that has no color table (or more than one), but quite rare.</i></p>
+    </body>
+</html>

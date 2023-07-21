@@ -12,20 +12,22 @@
             #color-table-box{width: 500px;}
         </style>
     </head>
-    <body>
+    <body onload="loadGif()">
+        <p>hueswap &mdash; edit gif color tables (<a href="faq.html" target="blank">what is this?</a>)</p>
         <img id="gifbox" src="test.gif"/>
         <div id="colorbox" style="float:left">
-        <input id="file-input" type="file" name="name" onchange="readFile()"/>
-        <button id="download" style="display: none;">Download</button>
-        <br/>
-        output filename: <input type="text" id="filename" value="result"/>.gif
-        <br/>
-        <button class="zero" id="red" style="display: none;">Zero Red</button>
-        <button class="zero" id="green" style="display: none;">Zero Green</button>
-        <button class="zero" id="blue" style="display: none;">Zero Blue</button><br/>
-        <button class="random" id="randred" style="display: none;">Random Red</button>
-        <button class="random" id="randgreen" style="display: none;">Random Green</button>
-        <button class="random" id="randblue" style="display: none;">Random Blue</button><br/>
+            <input id="file-input" type="file" name="name" onchange="loadGifFromInput()"/>
+            <button id="download" style="display: none;">Download</button>
+            <br/>
+            output filename: <input type="text" id="filename" value="result"/>.gif
+            <br/>
+            <button class="zero" id="red" style="display: none;">Zero All Reds</button>
+            <button class="zero" id="green" style="display: none;">Zero All Greens</button>
+            <button class="zero" id="blue" style="display: none;">Zero All Blues</button><br/>
+            <button class="random" id="randred" style="display: none;">Randomize Reds</button>
+            <button class="random" id="randgreen" style="display: none;">Randomize Greens</button>
+            <button class="random" id="randblue" style="display: none;">Randomize Blues</button><br/>
+            
             <div id="color-table-box"></div>
             <div id="color-table"></div>
             <div id="test-box"></div>
@@ -254,8 +256,36 @@
          }
      }
 
-     async function readFile() {
+    function loadGif() {
+        var myImage = document.getElementById("gifbox");
+
+        const myRequest = new Request("test.gif");
+
+        fetch(myRequest)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error, status = ${response.status}`);
+        }
+        return response.blob();
+      })
+      .then((myBlob) => {
+        const objectURL = URL.createObjectURL(myBlob);
+        readGif(myBlob);
+      })
+      .catch((error) => {
+        const p = document.createElement("p");
+        p.appendChild(document.createTextNode(`Error: ${error.message}`));
+        document.body.insertBefore(p, myImage);
+      });
+
+    }
+
+     function loadGifFromInput() {
          let file = document.querySelector('#file-input').files[0];
+         readGif(file);
+     }
+
+     async function readGif(file) {
          let base64String = await toBase64(file);
          let bytes = toBytes(base64String)
          let byteRange = findByteRange(bytes)
