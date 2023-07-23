@@ -8,6 +8,7 @@
             .colorvaluebox{display: inline-block; width: 60px; height: 44x;}
             label{display: inline-block; width: 60px;}
             #colorbox{float: left;}
+            #color-table{display: none;}
             #color-table-box{width: 500px;}
         </style>
     </head>
@@ -29,6 +30,7 @@
             <button class="random" id="randblue" style="display: none;">Randomize Blues</button><br/>
             
             <div id="color-table-box"></div>
+            <div id="color-table"></div>
             <div id="test-box"></div>
             
         </div>
@@ -164,6 +166,28 @@
          a.click();
      }
 
+     const renderColorTableHTML = (colorTable, callback) => {
+         let colorTableList = document.querySelector('#color-table');
+         colorTableList.innerHTML = "";
+         colorTable.forEach((element, idx) => {
+             input = document.createElement("input");
+             input.id = idx;
+             input.type = "text";
+             input.value = element;
+             switch(idx % 3) {
+                 case 0: 
+                   input.setAttribute("class", "redval");
+                   break;
+                 case 1:
+                   input.setAttribute("class", "greenval");
+                   break;
+                 case 2:
+                   input.setAttribute("class", "blueval");
+                 }
+             input.onchange = updateColorTable(colorTable, callback);
+             colorTableList.appendChild(input);
+         });
+     }
 
      const renderColorTableBox = (colorTable, callback) => {
          let colorTableListBox = document.querySelector('#color-table-box');
@@ -218,6 +242,10 @@
 
      const colorTableUpdated = (bytes, colorTable, byteRange) => {
          return () => {
+             renderColorTableHTML(
+                 colorTable,
+                 colorTableUpdated(bytes, colorTable, byteRange)
+             );
              renderColorTableBox(
                  colorTable,
                  colorTableUpdated(bytes, colorTable, byteRange)
@@ -264,7 +292,8 @@
          let byteRange = findByteRange(bytes)
          let hex = toHex(bytes)
          let colorTable = hex.slice(byteRange[0], byteRange[1])
-         let callback = colorTableUpdated(bytes, colorTable, byteRange)
+         let callback = colorTableUpdated(bytes, colorTable, byteRange);
+         renderColorTableHTML(colorTable, callback);
          renderColorTableBox(colorTable, callback);
          renderZeroButtons(colorTable, callback);
          renderRandomButtons(colorTable, callback);
