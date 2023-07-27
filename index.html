@@ -1,21 +1,33 @@
 <html>
     <head>
-        <title>hueswap -- gif color table editor</title>
+        <title>Hueswap -- gif color table editor</title>
+        <meta name="description" content="Tool for easily editing gif color tables"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <style>
-            .redval{color: #aa0000; width: 30px; height: 22px;}
-            .greenval{color: #00aa00; width: 30px; height: 22px;}
-            .blueval{color: #0000aa; width: 30px; height: 22px;}
-            .colorvaluebox{display: inline-block; width: 60px; height: 44x;}
-            label{display: inline-block; width: 60px;}
-            #colorbox{float: left;}
-            #color-table{display: none;}
-            #color-table-box{width: 500px;}
+            .colorvaluebox{display: inline-block; width: 4em; height: 2em;}
+            label{display: inline-block; width: 4em;}
+            
+            #colorbox{
+                float: left;
+                width:32em;
+            }
+            #color-table{
+                display: none;
+                width: 32em;
+                height: 0px;
+            }
+            #color-table-box{width: 32em;}
+            @media screen and (max-width: 640px) {
+                #colorbox, #gifbox, #color-table-box{
+                    float:none;
+                }
+            }
         </style>
     </head>
     <body onload="loadGif()">
-        <p>hueswap &mdash; edit gif color tables (<a href="faq.html" target="blank">what is this?</a>)</p>
+        <div class="textbox">Hueswap &mdash; edit gif color tables (<a href="faq.html" target="blank">what is this?</a>)</div>
         <img id="gifbox" src="test.gif"/>
-        <div id="colorbox" style="float:left">
+        <div id="colorbox">
             <input id="file-input" type="file" name="name" accept=".gif" onchange="loadGifFromInput()"/>
             <button id="download" style="display: none;">Download</button>
             <button id="reload" onclick="loadGif()">Reload Baby</button>
@@ -29,6 +41,7 @@
             <button class="random" id="randgreen" style="display: none;">Randomize Greens</button>
             <button class="random" id="randblue" style="display: none;">Randomize Blues</button><br/>
             
+            <span>color table:</span><br/>
             <div id="color-table-box"></div>
             <div id="color-table"></div>
             <div id="test-box"></div>
