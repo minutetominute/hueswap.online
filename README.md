@@ -12,6 +12,6 @@ The way GIFs handle color info is fairly unique — it's called [indexed color m
 Hueswap hacks directly into a GIF's color table and lets you change the color values, leaving everything else unchanged. The arrangement of the pixels remains the same — only the colors change.
 
 ## Who is responsible for this?
-Hueswap was developed by Jose Garza and Benjamin Berg, based on a concept by Benjamin Berg.
+Hueswap was developed by Jos&#233; Garza and Benjamin Berg, based on a concept by Benjamin Berg.
 
 _* It is possible to create a GIF that has no color table (or more than one), but quite rare._
