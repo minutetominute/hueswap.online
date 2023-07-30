@@ -40,6 +40,9 @@
             <button class="random" id="randred" style="display: none;">Randomize Reds</button>
             <button class="random" id="randgreen" style="display: none;">Randomize Greens</button>
             <button class="random" id="randblue" style="display: none;">Randomize Blues</button><br/>
+            <button class="ff" id="ffred" style="display: none;">Max All Reds</button>
+            <button class="ff" id="ffgreen" style="display: none;">Max All Greens</button>
+            <button class="ff" id="ffblue" style="display: none;">Max All Blues</button><br/>
             
             <span>color table:</span><br/>
             <div id="color-table-box"></div>
@@ -149,6 +152,35 @@
              let colorChannel = button.id
              button.onclick = () => {
                  randomColorChannel(
+                     colorTable,
+                     colorChannel,
+                     callback
+             )};
+         });
+     }
+
+     const ffColorChannel = (colorTable, colorChannel, callback) => {
+         var idx;
+         if (colorChannel === "ffred") {
+             idx = 0;
+         } else if (colorChannel === "ffgreen") {
+             idx = 1;
+         } else if (colorChannel === "ffblue") {
+             idx = 2;
+         }
+         for(var i = idx; i < colorTable.length; i = i+3) {
+             colorTable[i] = 'ff'
+         }
+         callback()
+     }
+
+     const renderFFButtons = (colorTable, callback) => {
+         buttons = document.querySelectorAll('.ff');
+         buttons.forEach(button => {
+             button.style = "";
+             let colorChannel = button.id
+             button.onclick = () => {
+                 ffColorChannel(
                      colorTable,
                      colorChannel,
                      callback
@@ -310,6 +342,7 @@
          renderColorTableBox(colorTable, callback);
          renderZeroButtons(colorTable, callback);
          renderRandomButtons(colorTable, callback);
+         renderFFButtons(colorTable, callback);
          newGif(bytes, colorTable, byteRange);
      }
 
