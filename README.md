@@ -1,7 +1,7 @@
 # hueswap.online
 
 ## What is Hueswap?
-Hueswap is a web app for editing GIF color tables. Upload your favorite GIF, change the colors around, and then download the result!
+Hueswap is a web app for editing GIF color tables. Upload your favorite GIF, change the colors around, and then download the result! Try it out yourself at http://animalswithinanimals.com/hueswap/
 
 ## Does Hueswap only work with GIFs? What about WEBP/MP4/etc?
 Hueswap only works with _real GIF files_ because it relies on the GIF's color table to work. It does not work with any fake pseudo-GIF formats like WEBP. (Fortunately there are free tools online for converting WEBP and similar formats into real GIFs.)
